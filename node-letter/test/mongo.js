@@ -1,7 +1,9 @@
 var MongoClient = require('mongodb').MongoClient;
-var DB_CONN_STR = 'mongodb://localhost:12345/test';
+var config = require('./config');
 var db = null;
 var collection = null;
+var DB_CONN_STR = config.DB_CONN_STR;
+var DB_COLLECTION = config.DB_COLLECTION;
 
 var insertData = function(collection, data, callback) {
   collection.insert(data, function (err, res) {
@@ -47,47 +49,60 @@ var removeData = function(collection, whereStr, callback) {
   });
 };
 
-MongoClient.connect(DB_CONN_STR, function (err, dbHandler) {
-  if (err) {
-    console.log(err);
-    return;
-  }
+var connect = function (callback) {
+  MongoClient.connect(DB_CONN_STR, function (err, dbHandler) {
+    if (err) {
+      console.log(err);
+      return;
+    }
 
-  db = dbHandler;
-  collection = db.collection('user');
+    db = dbHandler;
+    collection = db.collection(DB_COLLECTION);
 
-  console.log('mongodb connect successful');
-  // insertData(collection, [{
-  //   name: 'jiavan',
-  //   age: 20
-  // }, {
-  //   name: 'liziyang',
-  //   age: 21
-  // }], function (res) {
-  //   console.log(res);
-  //   db.close();
-  // });
+    callback && callback({ db, collection });
 
-  // updateData(collection, {
-  //   name: 'jiavanaaa'
-  // }, {
-  //   $set: {
-  //     name: 'jiavan',
-  //   }
-  // }, function (res) {
-  //   console.log(res);
-  //   db.close();
-  // });
+    // insertData(collection, [{
+    //   name: 'jiavan',
+    //   age: 20
+    // }, {
+    //   name: 'liziyang',
+    //   age: 21
+    // }], function (res) {
+    //   console.log(res);
+    //   db.close();
+    // });
 
-  // selectData(collection, {name: 'jiavan'}, function (res) {
-  //   console.log(res);
-  //   db.close();
-  // })
+    // updateData(collection, {
+    //   name: 'jiavanaaa'
+    // }, {
+    //   $set: {
+    //     name: 'jiavan',
+    //   }
+    // }, function (res) {
+    //   console.log(res);
+    //   db.close();
+    // });
 
-  removeData(collection, {
-    name: 'jiavan'
-  }, function (res) {
-    console.log(res);
-    db.close();
-  })
-});
+    // selectData(collection, {name: 'jiavan'}, function (res) {
+    //   console.log(res);
+    //   db.close();
+    // })
+
+    // removeData(collection, {
+    //   name: 'jiavan'
+    // }, function (res) {
+    //   console.log(res);
+    //   db.close();
+    // })
+  });
+};
+
+module.exports = {
+  connect,
+  insertData,
+  selectData,
+  removeData,
+  updateData,
+  db,
+  collection
+};
