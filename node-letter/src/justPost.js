@@ -7,11 +7,12 @@ var pageId = process.argv.slice(2)[0];
 var dbHandler = {}
 var data;
 var pid = Math.floor(pageId / 10) * 10 + 1;
+const COLLECTION = 'pageState';
 
 if (pageId % 10 === 1) {
   pid -= 10;
 }
-mongo.connect(function (res) {
+mongo.connect(COLLECTION ,function (res) {
   console.log('connect success');
   dbHandler = res;
   mongo.selectData(dbHandler.collection, { pageId: pid }, function (res) {

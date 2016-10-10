@@ -3,7 +3,6 @@ var config = require('./config');
 var db = null;
 var collection = null;
 var DB_CONN_STR = config.DB_CONN_STR;
-var DB_COLLECTION = config.DB_COLLECTION;
 
 var insertData = function(collection, data, callback) {
   collection.insert(data, function (err, res) {
@@ -49,7 +48,7 @@ var removeData = function(collection, whereStr, callback) {
   });
 };
 
-var connect = function (callback) {
+var connect = function (collection, callback) {
   MongoClient.connect(DB_CONN_STR, function (err, dbHandler) {
     if (err) {
       console.log(err);
@@ -57,7 +56,7 @@ var connect = function (callback) {
     }
 
     db = dbHandler;
-    collection = db.collection(DB_COLLECTION);
+    collection = db.collection(collection);
 
     callback && callback({ db, collection });
 

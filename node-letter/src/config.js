@@ -1,4 +1,4 @@
-const DB_CONN_STR = 'mongodb://localhost:12345/letter';
+const DB_CONN_STR = 'mongodb://localhost:2333/letter';
 const DB_COLLECTION = 'state';
 const URL_LIST = 'http://cs.cqut.edu.cn/DeanMail/MailList.aspx';
 

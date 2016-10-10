@@ -3,16 +3,14 @@ var superagent = require('superagent');
 var cheerio = require('cheerio');
 var Observer = require('./observer');
 var config = require('./config');
+var Log = require('./log');
 var observer = new Observer();
 var state = {};
 var dbHandler = {};
+var start;
+const COLLECTION = 'pageState';
 
 observer.subscribe('fetched', function (data) {
-
-  if (data.pageId > 20000) {
-    dbHandler.db.close();
-    return;
-  }
 
   // get next page
   var $ = cheerio.load(data.res.text);
@@ -27,14 +25,10 @@ observer.subscribe('fetched', function (data) {
   };
   mongo.insertData(dbHandler.collection, insertData, function () {
     console.log('insert a pices of data' + pageId);
+    Log.logPageState((new Date()) + '\tinsert data ' + pageId + '\n');
   });
 
   getState(__VIEWSTATE, __EVENTVALIDATION, pageId + 10);
-});
-
-mongo.connect(function (res) {
-  dbHandler = res;
-  console.log('connect db success');
 });
 
 function getState(__VIEWSTATE, __EVENTVALIDATION, pageId) {
@@ -62,6 +56,9 @@ function getState(__VIEWSTATE, __EVENTVALIDATION, pageId) {
        if (err) {
          console.log(err.message);
          console.log('done!');
+         Log.logPageState((new Date()) + '\tdone!\n');
+         Log.logPageState('speed ' + (Date.now() - start) + 's');
+         dbHandler.db.close();
          return;
        }
 
@@ -69,4 +66,10 @@ function getState(__VIEWSTATE, __EVENTVALIDATION, pageId) {
      });
 }
 
-getState(null, null, 1);
+start = Date.now();
+mongo.connect(COLLECTION ,function (res) {
+  dbHandler = res;
+  console.log('connect mongo success');
+  Log.logPageState((new Date()) + '\tget state spider start...\n');
+  getState(null, null, 1);
+});
