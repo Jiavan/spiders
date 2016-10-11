@@ -57,7 +57,7 @@ function getState(__VIEWSTATE, __EVENTVALIDATION, pageId) {
          console.log(err.message);
          console.log('done!');
          Log.logPageState((new Date()) + '\tdone!\n');
-         Log.logPageState('speed ' + (Date.now() - start) + 's');
+         Log.logPageState('speed ' + (Date.now() - start) + 'ms');
          dbHandler.db.close();
          return;
        }
