@@ -5,18 +5,17 @@ var mongo = require('./mongo');
 var targetUrl = 'http://cs.cqut.edu.cn/DeanMail/MailList.aspx';
 var dbHandler = {}
 var data;
-var pid = Math.floor(pageId / 10) * 10 + 1;
+var pid;
 const COLLECTION = 'pageState';
 
 function getPage(pageId, callback) {
+  pid = Math.floor(pageId / 10) * 10 + 1;
   if (pageId % 10 === 1) {
     pid -= 10;
   }
   mongo.connect(COLLECTION, function(res) {
     dbHandler = res;
-    mongo.selectData(dbHandler.collection, {
-      pageId: pid
-    }, function(res) {
+    mongo.selectData(dbHandler.collection, { pageId: pid }, function(res) {
       dbHandler.db.close();
 
       if ((res instanceof Array) && res.length) {
@@ -43,10 +42,18 @@ function getPage(pageId, callback) {
             console.log(err);
             return;
           }
+
+          // var $ = cheerio.load(res.text);
+          // $('td [align="left"] a').each(function (idx, item) {
+          //   var $ = cheerio.load(item);
+          //   console.log($('a').attr('title'));
+          // });
           callback && callback(res);
         });
-    });
-  )
+      });
+  });
 }
 
-      module.exports = getPage;
+module.exports = getPage;
+// commond line test
+// getPage(process.argv.slice(2));
