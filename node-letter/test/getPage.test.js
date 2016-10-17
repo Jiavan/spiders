@@ -1,6 +1,6 @@
 var superagent = require('superagent');
 var cheerio = require('cheerio');
-var mongo = require('./mongo');
+var mongo = require('../src/mongo');
 
 var targetUrl = 'http://cs.cqut.edu.cn/DeanMail/MailList.aspx';
 var dbHandler = {}
@@ -9,8 +9,6 @@ var pid;
 const COLLECTION = 'pageState';
 
 function getPage(pageId, callback) {
-
-  // 计算页面的对应的session id并在mongo中查找对应state
   pid = Math.floor(pageId / 10) * 10 + 1;
   if ((pageId % 10 === 1) || (pageId % 10 === 0)) {
     pid -= 10;
@@ -20,7 +18,6 @@ function getPage(pageId, callback) {
     mongo.selectData(dbHandler.collection, { pageId: pid }, function(res) {
       dbHandler.db.close();
 
-      // 如果存在pid则返回state当前第一页则直接post，否则抛出异常
       if ((res instanceof Array) && res.length) {
         data = {
           __EVENTTARGET: 'ctl00$ContentPlaceHolder_main$DeanMailList1$GridView1',
@@ -32,7 +29,6 @@ function getPage(pageId, callback) {
         data = null;
       } else {
         throw new Error('page isn\'t exist');
-        return;
       }
 
       superagent
@@ -45,9 +41,16 @@ function getPage(pageId, callback) {
         .send(data)
         .end(function(err, res) {
           if (err) {
+
             // console.log(err);
             console.log('get page done!', err.meesage);
           }
+
+          var $ = cheerio.load(res.text);
+          $('td [align="left"] a').each(function (idx, item) {
+            var $ = cheerio.load(item);
+            console.log($('a').attr('title'));
+          });
           callback && callback(res);
         });
       });
@@ -55,3 +58,5 @@ function getPage(pageId, callback) {
 }
 
 module.exports = getPage;
+// commond line test
+getPage(process.argv.slice(2));
