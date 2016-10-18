@@ -19,8 +19,13 @@ var logPageState = function (msg) {
   log('../log/spider.pageState.log', msg)
 };
 
+var logPageContent = function (msg) {
+  log('../log/spider.pageContent.log', msg);
+};
+
 logPageState(process.argv.slice(2)[0]);
 
 module.exports = {
-  logPageState
+  logPageState,
+  logPageContent
 };

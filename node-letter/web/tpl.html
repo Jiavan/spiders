@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>info</title>
+    <style media="screen">
+      * {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        text-decoration: none;
+      }
+      table {
+        width: 960px;
+        margin: auto;
+        background: #efefef;
+        border: none;
+        border-collapse: collapse;
+      }
+      td {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        text-align: center;
+      }
+      a:link, a:visited, a:hover, a:active {
+        color: #4078c0;
+      }
+      .idx {
+        min-width: 50px;
+      }
+      .category {
+        max-width: 100px;
+      }
+      .title {
+        max-width: 300px;
+        text-align: left;
+      }
+      .time {
+        max-width: 200px;
+      }
+      .pageview {
+        max-width: 100px;
+      }
+      .url {
+        max-width: 100px;
+      }
+      tr {
+        height: 40px;
+      }
+      tr:nth-of-type(odd) {
+        background-color: #cfcfcf;
+      }
+      tr, th, td {
+        border: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <table>
+      {{if index}}
+      <tbody>
+        <tr>
+          <td>Idx</td>
+          <td>Category</td>
+          <td>Title</td>
+          <td>PV</td>
+          <td>Time</td>
+        </tr>
+        {{each list as item idx}}
+        <tr>
+          <td class="idx">{{idx}}</td>
+          <td class="category">{{item.category}}</td>
+          <td class="title"><a href="{{item.url}}">{{item.title}}</a></td>
+          <td class="pageview">{{item.pageView}}</td>
+          <td class="time">{{item.time}}</td>
+        </tr>
+        {{/each}}
+      </tbody>
+      {{else}}
+      <tbody>
+        <tr>
+          <td>Idx</td>
+          <td>Category</td>
+          <td>Title</td>
+          <td>Responesor</td>
+          <td>Length</td>
+        </tr>
+        {{each list as item idx}}
+        <tr>
+          <td class="idx">{{idx}}</td>
+          <td class="category">{{item.category}}</td>
+          <td class="title"><a href="{{item.url}}">{{item.title}}</a></td>
+          <td class="responesor">{{item.responesor}}</td>
+          <td class="text-length">{{item.textLength}}</td>
+        </tr>
+        {{/each}}
+      </tbody>
+      {{/if}}
+    </table>
+    <script>
+      document.querySelectorAll('.time').forEach(function (item, idx) {
+        item.innerText = new Date(parseFloat(item.innerText)).toLocaleString();
+      });
+    </script>
+  </body>
+</html>
