@@ -37,10 +37,8 @@ var getContent = function (urls) {
       .get(item.url)
       .end(function (err, res) {
         if (err) {
-          console.log(err);
-        }
-
-        if (res) {
+          console.log(err.message);
+        } else if (res) {
           var $ = cheerio.load(res.text);
           var data = {
             title: $('#ctl00_ContentPlaceHolder_main_DeanMailContent1_title').text(),
@@ -59,9 +57,10 @@ var getContent = function (urls) {
             }
             console.log('insert ' + data.title);
             log.logPageContent('insert ' + data.title + '\n');
-            observer.publish('insertData', ++insertCount);
           });
         }
+
+        observer.publish('insertData', ++insertCount);
       });
   });
 };

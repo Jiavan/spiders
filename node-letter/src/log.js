@@ -11,6 +11,7 @@ var log = function (logpath, msg) {
       if (err) {
         console.log(err);
       }
+      fs.close(fd);
     })
   });
 };
